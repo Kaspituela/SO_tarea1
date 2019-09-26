@@ -48,7 +48,7 @@ char* obtenerCarta(int cant){
             if (i==num)
             {
                 if (strcmp(file->d_name,".")==0 || strcmp(file->d_name,"..")==0)
-                return obtenerCarta(cant);
+                    return obtenerCarta(cant);
                 printf("%s\n", file->d_name);
                 strcpy(carta,file->d_name);
                 printf("%s\n", carta);
@@ -62,7 +62,7 @@ char* obtenerCarta(int cant){
         }
         closedir(dir_actual);
     } else {
-        printf("Error al abrir directorioo\n");
+        printf("Error al abrir directorio\n");
         exit(0);
     }
     return carta;
@@ -105,21 +105,64 @@ void listFiles(char *dir){
 }
 
 void createCards(char *name, char *dir){
-    FILE *fp;
     FILE *carta;
-    char s[100];
-    fp = fopen(name,"r");
-    char nombre[15];
+    char nombre[20];
     chdir(dir);
-    printf("%s\n", getcwd(s, 100));
-    while (fgets(nombre, 15, fp)) {
-        strtok(nombre, "\n");
-        strcat(nombre, ".txt");
-        carta = fopen(nombre,"w");
+    char colores[4][9] = {"azul", "rojo", "verde", "amarillo"};
+    int i, j;
+    for(i=0; i<4; i++)
+    {
+        //0s
+        sprintf(nombre, "0 %s.txt", colores[i]);
+        carta = fopen(nombre, "w");
         fclose(carta);
+
+        //+2s
+        sprintf(nombre, "+2 %s.txt", colores[i]);
+        carta = fopen(nombre, "w");
+        fclose(carta);
+        sprintf(nombre, "+2 %s2.txt", colores[i]);
+        carta = fopen(nombre, "w");
+        fclose(carta);
+
+        //reversas (R)
+        sprintf(nombre, "R %s.txt", colores[i]);
+        carta = fopen(nombre, "w");
+        fclose(carta);
+        sprintf(nombre, "R %s2.txt", colores[i]);
+        carta = fopen(nombre, "w");
+        fclose(carta);
+
+        //saltos (S)
+        sprintf(nombre, "S %s.txt", colores[i]);
+        carta = fopen(nombre, "w");
+        fclose(carta);
+        sprintf(nombre, "S %s2.txt", colores[i]);
+        carta = fopen(nombre, "w");
+        fclose(carta);
+
+        //cambios de color (color)
+        sprintf(nombre, "color%d.txt", i+1);
+        carta = fopen(nombre, "w");
+        fclose(carta);
+
+        //+4
+        sprintf(nombre, "+4, %d.txt", i+1);
+        carta = fopen(nombre, "w");
+        fclose(carta);
+
+        //del 1 al 9
+        for(j=1; j<10; j++)
+        {
+            sprintf(nombre, "%d %s.txt", j, colores[i]);
+            carta = fopen(nombre, "w");
+            fclose(carta);
+            sprintf(nombre, "%d %s2.txt", j, colores[i]);
+            carta = fopen(nombre, "w");
+            fclose(carta);
+        }
     }
-        chdir("..");
-        fclose(fp);
+    chdir("..");
 }
 
 
