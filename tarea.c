@@ -48,7 +48,10 @@ char* obtenerCarta(int cant){
             if (i==num)
             {
                 if (strcmp(file->d_name,".")==0 || strcmp(file->d_name,"..")==0)
+                {
+                    free(carta);
                     return obtenerCarta(cant);
+                }
                 printf("%s\n", file->d_name);
                 strcpy(carta,file->d_name);
                 printf("%s\n", carta);
@@ -70,7 +73,8 @@ char* obtenerCarta(int cant){
 
 void repartirCartas(){
     char *carta;
-    for (int i = 0; i < 7; i++) {
+    int i;
+    for (i = 0; i < 7; i++) {
         carta = obtenerCarta((i*4));
         entregarCarta("./player1",carta);
         free(carta);
