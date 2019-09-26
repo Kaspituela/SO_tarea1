@@ -172,7 +172,11 @@ int main() {
     struct stat st = {0};
     //Se crea mazo
     if (stat("./mazo",&st) >= 0) 
-        system("rm -rf ./mazo");
+        if(system("rm -rf ./player1")!=0)
+        {
+            printf("No se ha podido eliminar directorio previo\n");
+            exit(0);
+        }
     if (mkdir("./mazo", 0777) == -1){
         printf("Error para crear directorio mazo\n");
         exit(0);
@@ -184,32 +188,57 @@ int main() {
     printf(" %s\n", getcwd(s, 100));
 
     //Create players
-    if (stat("./player1",&st) < 0) system("rm -rf ./player1");
+    if (stat("./player1",&st) >= 0) 
+        if(system("rm -rf ./player1")!=0)
+        {
+            printf("No se ha podido eliminar directorio previo\n");
+            exit(0);
+        }
     if (mkdir("./player1", 0777) == -1){
         printf("Error para crear directorio player1\n");
         exit(0);
     }
 
-    if (stat("./player2",&st) < 0) system("rm -rf ./player2");
+    if (stat("./player2",&st) >= 0)
+        if(system("rm -rf ./player2")!=0)
+            {
+                printf("No se ha podido eliminar directorio previo\n");
+                exit(0);
+            }
     if (mkdir("./player2", 0777) == -1){
         printf("Error para crear directorio player2\n");
         exit(0);
     }
 
-    if (stat("./player3",&st) < 0) system("rm -rf ./player3");
+    if (stat("./player3",&st) >= 0)
+        if(system("rm -rf ./player3")!=0)
+            {
+                printf("No se ha podido eliminar directorio previo\n");
+                exit(0);
+            }
     if (mkdir("./player3", 0777) == -1){
         printf("Error para crear directorio player3\n");
         exit(0);
     }
 
-    if (stat("./player4",&st) < 0) system("rm -rf ./player4");
+    if (stat("./player4",&st) >= 0)
+        if(system("rm -rf ./player4")==0)
+            {
+                printf("No se ha podido eliminar directorio previo\n");
+                exit(0);
+            }
     if (mkdir("./player4", 0777) == -1){
         printf("Error para crear directorio player4\n");
         exit(0);
     }
 
     //Create lastCard
-    if (stat("./lastCard",&st) < 0) system("rm -rf ./lastCard");
+    if (stat("./lastCard",&st) >= 0)
+        if(system("rm -rf ./lastCard")==0)
+            {
+                printf("No se ha podido eliminar directorio previo\n");
+                exit(0);
+            }
     if (mkdir("./lastCard", 0777) == -1){
         printf("Error para crear directorio lastCard\n");
         exit(0);
