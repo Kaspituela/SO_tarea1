@@ -170,19 +170,19 @@ int main() {
     srand(time(0));
     char *name = "cartas.txt";
     struct stat st = {0};
-    //Create directory
-    if (stat("./mazo",&st) < 0) {
-        if (mkdir("./mazo", 0777) == -1){
-            printf("Error para crear directorio mazo\n");
-            exit(0);
+    //Se crea mazo
+    if (stat("./mazo",&st) >= 0) 
+        system("rm -rf ./mazo");
+    if (mkdir("./mazo", 0777) == -1){
+        printf("Error para crear directorio mazo\n");
+        exit(0);
         }
-    }
+
     //Create cards
-    if (stat("./mazo",&st) >= 0){
-        char s[100];
-        createCards(name,"mazo");
-        printf(" %s\n", getcwd(s  , 100));
-    }
+    char s[100];
+    createCards(name,"mazo");
+    printf(" %s\n", getcwd(s  , 100));
+
     //Create players
     if (stat("./player1",&st) < 0) {
         if (mkdir("./player1", 0777) == -1){
