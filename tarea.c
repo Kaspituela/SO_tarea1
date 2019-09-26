@@ -176,12 +176,12 @@ int main() {
     if (mkdir("./mazo", 0777) == -1){
         printf("Error para crear directorio mazo\n");
         exit(0);
-        }
+    }
 
     //Create cards
     char s[100];
     createCards(name,"mazo");
-    printf(" %s\n", getcwd(s  , 100));
+    printf(" %s\n", getcwd(s, 100));
 
     //Create players
     if (stat("./player1",&st) < 0) {
