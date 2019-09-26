@@ -5,4 +5,7 @@ tarea: tarea.c
 	$(CC) -o tarea tarea.c $(CFLAGS)
 
 run:
-		./tarea
+	./tarea
+
+rm:
+	rm -rf tarea ./*/
