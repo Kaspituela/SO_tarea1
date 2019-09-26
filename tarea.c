@@ -209,13 +209,12 @@ int main() {
     }
 
     //Create lastCard
-    if (stat("./lastCard",&st) < 0) {
-        if (mkdir("./lastCard", 0777) == -1){
-            printf("Error para crear directorio lastCard\n");
-            exit(0);
-        }
-    } else
-      eliminarCartas("./lastCard");
+    if (stat("./lastCard",&st) < 0) system("rm -rf ./lastCard");
+    if (mkdir("./lastCard", 0777) == -1){
+        printf("Error para crear directorio lastCard\n");
+        exit(0);
+    }
+    
 
     //listFiles("./mazo");
     repartirCartas();
