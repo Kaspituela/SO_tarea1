@@ -30,8 +30,10 @@ char* obtenerCarta(int cant){
             if (i==num)
             {
                 if (strcmp(file->d_name,".")==0 || strcmp(file->d_name,"..")==0)
+                {
+                    closedir(dir_actual);
                     return obtenerCarta(cant);
-
+                  }
                 printf("%s\n", file->d_name);
                 strcpy(carta,file->d_name);
                 printf("%s\n", carta);
@@ -44,7 +46,7 @@ char* obtenerCarta(int cant){
             }
             i++;
         }
-        
+
     } else {
         printf("Error al abrir directorio\n");
         exit(0);
@@ -59,19 +61,19 @@ void repartirCartas()
     {
         carta = obtenerCarta((i*4));
         entregarCarta("./player1",carta);
-        
+
         carta = obtenerCarta((i*4)+1);
         entregarCarta("./player2",carta);
-        
+
         carta = obtenerCarta((i*4)+2);
         entregarCarta("./player3",carta);
-        
+
         carta = obtenerCarta((i*4)+3);
         entregarCarta("./player4",carta);
     }
     carta = obtenerCarta(28);
     entregarCarta("./lastCard",carta);
-    
+
 }
 
 void createCards(char *name, char *dir){
@@ -141,7 +143,7 @@ int main() {
     char *name = "cartas.txt";
     struct stat st = {0};
     //Se crea mazo
-    if (stat("./mazo",&st) >= 0) 
+    if (stat("./mazo",&st) >= 0)
         if(system("rm -rf ./mazo")!=0)
         {
             printf("No se ha podido eliminar directorio mazo\n");
@@ -158,7 +160,7 @@ int main() {
     printf(" %s\n", getcwd(s, 100));
 
     //Create players
-    if (stat("./player1",&st) >= 0) 
+    if (stat("./player1",&st) >= 0)
         if(system("rm -rf ./player1")!=0)
         {
             printf("No se ha podido eliminar directorio player1\n");
@@ -213,7 +215,7 @@ int main() {
         printf("Error para crear directorio lastCard\n");
         exit(0);
     }
-    
+
 
     //listFiles("./mazo");
     repartirCartas();
