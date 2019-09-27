@@ -33,7 +33,7 @@ char* obtenerCarta(int cant){
                 {
                     closedir(dir_actual);
                     return obtenerCarta(cant);
-                  }
+                }
                 printf("%s\n", file->d_name);
                 strcpy(carta,file->d_name);
                 printf("%s\n", carta);
