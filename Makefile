@@ -1,11 +1,10 @@
 CC=gcc
-CFLAGS=-I. -g
 
-tarea: tarea.c
-	$(CC) -o tarea tarea.c $(CFLAGS)
+run: tarea
+	./main
 
-run:
-	./tarea
+tarea:
+	$(CC) -o main tarea.c
 
 rm:
-	rm -rf tarea ./*/
+	rm -rf main ./*/
