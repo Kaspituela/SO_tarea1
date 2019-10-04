@@ -2,3 +2,5 @@
 main
 *.txt
 *.pdf
+*.out
+test*
