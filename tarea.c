@@ -34,7 +34,14 @@ o +4
 3:  verde
 4:  amarillo
 */
-int color=0
+int color=0;
+
+/*variable sentido
+indica el sentido de los turnos, cresciente o decresciente (1 2 3 o 1 4 3)
+0:  cresciente
+1:  decresciente
+*/
+int sentido = 0;
 
 
 void entregarCarta(char *destino, char *carta){
@@ -184,7 +191,7 @@ int aplicarEfecto(int jugador)
         mas2(jugador);
         break;
     case 2:
-        mas2()
+        mas2();
     
     default:
         break;
@@ -206,7 +213,7 @@ int jugarCarta(int jugador)
                 strcpy(nombre, arc->d_name);
                 token = strtok(nombre, " ");
                 val = getVal(token);
-                if(val >= 48 && val <= 57)
+                if(val >= 48 && val <= 57){}
 
 
             }
