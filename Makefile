@@ -1,5 +1,6 @@
 CC=gcc
 FLAGS=-Wall
+
 run: tarea
 	./main
 

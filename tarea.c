@@ -7,7 +7,35 @@
 #include <dirent.h>
 #include <time.h>
 
+/* variable de estado
+El valor de esta variable representa un efecto aplicado por una carta especial
+
+0:  no efecto
+1:  +2
+2:  +4
+3:  salto
+4:  reversa
+5:  cambio color
+*/
+int estado = 0;
+
+/* variable carta
+Permite el paso de string entre funciones a través de memoria estática
+*/
 char carta[20];
+
+/*variable color
+Se revisa el valor de esta carta cuando se acumula un efecto de cambio de color
+o +4
+
+0:  no inicializada
+1:  azul
+2:  rojo
+3:  verde
+4:  amarillo
+*/
+int color=0
+
 
 void entregarCarta(char *destino, char *carta){
     chdir(destino);
@@ -16,6 +44,7 @@ void entregarCarta(char *destino, char *carta){
     fclose(fp);
     chdir("..");
 }
+
 
 char* obtenerCarta(int cant){
     char s[100];
@@ -135,6 +164,54 @@ void createCards(char *name, char *dir){
         }
     }
     chdir("..");
+}
+
+
+int getVal(char* palabra)
+{
+    //obtiene la suma de los valores de cada caracter en la palabra
+    int i, suma = 0;
+    for(i=0; palabra[i]; i++)
+        suma += (int)palabra[i];
+    return suma;
+}
+
+int aplicarEfecto(int jugador)
+{
+    switch (estado)
+    {
+    case 1:
+        mas2(jugador);
+        break;
+    case 2:
+        mas2()
+    
+    default:
+        break;
+    }
+}
+int jugarCarta(int jugador)
+{
+    DIR *lastCard = opendir("lastCard");
+    struct dirent *arc;
+    char nombre[20], *token;
+    int val;
+    //revisa la última carta jugada
+    if(lastCard)
+    {
+        arc = readdir(lastCard);
+        while(arc)
+            if((arc->d_name)[0] != '.')
+            {
+                strcpy(nombre, arc->d_name);
+                token = strtok(nombre, " ");
+                val = getVal(token);
+                if(val >= 48 && val <= 57)
+
+
+            }
+    }
+
 }
 
 
