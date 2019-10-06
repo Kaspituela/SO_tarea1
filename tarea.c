@@ -142,7 +142,7 @@ void createCards(char *name, char *dir){
         sprintf(nombre, "+2 %s.txt", colores[i]);
         carta = fopen(nombre, "w");
         fclose(carta);
-        sprintf(nombre, "+2 %s2.txt", colores[i]);
+        sprintf(nombre, "+2 %s 2.txt", colores[i]);
         carta = fopen(nombre, "w");
         fclose(carta);
 
@@ -150,7 +150,7 @@ void createCards(char *name, char *dir){
         sprintf(nombre, "R %s.txt", colores[i]);
         carta = fopen(nombre, "w");
         fclose(carta);
-        sprintf(nombre, "R %s2.txt", colores[i]);
+        sprintf(nombre, "R %s 2.txt", colores[i]);
         carta = fopen(nombre, "w");
         fclose(carta);
 
@@ -158,7 +158,7 @@ void createCards(char *name, char *dir){
         sprintf(nombre, "S %s.txt", colores[i]);
         carta = fopen(nombre, "w");
         fclose(carta);
-        sprintf(nombre, "S %s2.txt", colores[i]);
+        sprintf(nombre, "S %s 2.txt", colores[i]);
         carta = fopen(nombre, "w");
         fclose(carta);
 
@@ -178,7 +178,7 @@ void createCards(char *name, char *dir){
             sprintf(nombre, "%d %s.txt", j, colores[i]);
             carta = fopen(nombre, "w");
             fclose(carta);
-            sprintf(nombre, "%d %s2.txt", j, colores[i]);
+            sprintf(nombre, "%d %s 2.txt", j, colores[i]);
             carta = fopen(nombre, "w");
             fclose(carta);
         }
@@ -199,6 +199,7 @@ int getVal(char* palabra)
 
 void jugarCarta(char *nombre)
 {
+    //borra el contenido de lastCard y pone una carta especificada ahí
     chdir("lastCard");
     system("rm -rf ./*");
     FILE *arc = fopen(nombre, "w");
@@ -209,6 +210,7 @@ void jugarCarta(char *nombre)
 
 void masCartas(int jugador, int cantidad)
 {
+    //le agrega cierta 'cantidad' de cartas al 'jugador' especificado
     int i;
     char s[20];
     sprintf(s, "player%d", jugador);
@@ -222,6 +224,11 @@ void masCartas(int jugador, int cantidad)
 
 void turno(int jugador)
 {
+    /*
+    ejecuta el turno del 'jugador' revisando si tiene efectos acumulados,
+    revisa la última carta jugada y juega la primera carta que cumpla con las condiciones
+    aplicando los efectos correspondientes
+    */
     switch (estado)
     {
         case 0:
@@ -269,6 +276,8 @@ void turno(int jugador)
             {
                 closedir(player_dir);
                 jugarCarta(player_carta->d_name);
+                strcpy(ultima_jugada1, token1);
+                strcpy(ultima_jugada2, token2);
                 chdir(nombre_player_dir);
                 remove(player_carta->d_name);
                 chdir("..");
