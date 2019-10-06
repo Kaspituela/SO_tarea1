@@ -197,11 +197,13 @@ int getVal(char* palabra)
 }
 
 
-void jugarCarta()
+void jugarCarta(char *nombre)
 {
     chdir("lastCard");
     system("rm -rf ./*");
-    
+    FILE *arc = fopen(nombre, "w");
+    fclose(arc);
+    chdir("..");
 }
 
 
@@ -209,7 +211,7 @@ void masCartas(int jugador, int cantidad)
 {
     int i;
     char s[20];
-    sprintf("player%d", jugador);
+    sprintf(s, "player%d", jugador);
     for(i=0; i<cantidad; i++)
     {
         obtenerCarta(cant_cartas_sacadas++);
@@ -249,7 +251,7 @@ void turno(int jugador)
     char *token1, *token2, nombre_carta[20];
 
     char nombre_player_dir[20];//nombre del directorio del jugador
-    sprintf("player%d", jugador);
+    sprintf(nombre_player_dir, "player%d", jugador);
 
     DIR *player_dir = opendir(nombre_player_dir);
     struct dirent *player_carta;
