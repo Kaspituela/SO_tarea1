@@ -43,6 +43,19 @@ indica el sentido de los turnos, cresciente o decresciente (1 2 3 o 1 4 3)
 */
 int sentido = 0;
 
+/*variable ultima_jugada 1 y 2
+indica la primera y segunda parte del nombre de la carta en lastCard para facilitar
+el acceso al nombre
+*/
+char ultima_jugada1[20], ultima_jugada2[20];
+
+/*variable cant_cartas_sacadas
+almacena lacantidad de cartas que han sacado del mazo
+parte en 29 porque esa es la cantidad de cartas que quedan luego de repartir manos
+y poner la primera carta
+*/
+int cant_cartas_sacadas = 29;
+
 
 void entregarCarta(char *destino, char *carta){
     chdir(destino);
@@ -71,7 +84,7 @@ char* obtenerCarta(int cant){
                     return obtenerCarta(cant);
                 }
                 printf("%s\n", file->d_name);
-                strcpy(carta,file->d_name);
+                strcpy(carta, file->d_name);
                 printf("%s\n", carta);
                 printf("%s\n", getcwd(s, 100));
                 chdir("mazo");
@@ -95,16 +108,16 @@ void repartirCartas()
     char *carta;
     int i;
     for (i = 0; i < 7; i++) {
-        carta = obtenerCarta((i*4));
+        carta = obtenerCarta(i*4);
         entregarCarta("./player1",carta);
 
-        carta = obtenerCarta((i*4)+1);
+        carta = obtenerCarta(i*4+1);
         entregarCarta("./player2",carta);
 
-        carta = obtenerCarta((i*4)+2);
+        carta = obtenerCarta(i*4+2);
         entregarCarta("./player3",carta);
 
-        carta = obtenerCarta((i*4)+3);
+        carta = obtenerCarta(i*4+3);
         entregarCarta("./player4",carta);
     }
     carta = obtenerCarta(28);
@@ -155,7 +168,7 @@ void createCards(char *name, char *dir){
         fclose(carta);
 
         //+4
-        sprintf(nombre, "+4, %d.txt", i+1);
+        sprintf(nombre, "+4 %d.txt", i+1);
         carta = fopen(nombre, "w");
         fclose(carta);
 
@@ -183,47 +196,126 @@ int getVal(char* palabra)
     return suma;
 }
 
-int aplicarEfecto(int jugador)
+
+void jugarCarta()
+{
+    chdir("lastCard");
+    system("rm -rf ./*");
+    
+}
+
+
+void masCartas(int jugador, int cantidad)
+{
+    int i;
+    char s[20];
+    sprintf("player%d", jugador);
+    for(i=0; i<cantidad; i++)
+    {
+        obtenerCarta(cant_cartas_sacadas++);
+        entregarCarta(s, carta);
+    }
+}
+
+
+void turno(int jugador)
 {
     switch (estado)
     {
-    case 1:
-        mas2(jugador);
-        break;
-    case 2:
-        mas2();
-    
-    default:
-        break;
+        case 0:
+            break;
+        
+        case 1:
+            masCartas(jugador, 2);
+            estado = 0;
+            return;
+
+        case 2:
+            masCartas(jugador, 4);
+            estado = 0;
+            return;
+        case 3:
+            estado = 0;
+            return;
+
+        case 4:
+            printf("Esto no debería pasar R\n");
+            exit(0);
+
+        case 5:
+            printf("Esto no debería pasar COLOR\n");
+            exit(0);
     }
-}
-int jugarCarta(int jugador)
-{
-    DIR *lastCard = opendir("lastCard");
-    struct dirent *arc;
-    char nombre[20], *token;
-    int val;
-    //revisa la última carta jugada
-    if(lastCard)
+    char *token1, *token2, nombre_carta[20];
+
+    char nombre_player_dir[20];//nombre del directorio del jugador
+    sprintf("player%d", jugador);
+
+    DIR *player_dir = opendir(nombre_player_dir);
+    struct dirent *player_carta;
+
+    player_carta = readdir(player_dir);
+    while(player_carta)
     {
-        arc = readdir(lastCard);
-        while(arc)
-            if((arc->d_name)[0] != '.')
+        if((player_carta->d_name)[0] != '.')
+        {
+            strcpy(nombre_carta, player_carta->d_name);
+            token1 = strtok(nombre_carta, " ");
+            token2 = strtok(NULL, " ");
+
+            if(!strcmp(token1, ultima_jugada1) || !strcmp(token2, ultima_jugada2))
             {
-                strcpy(nombre, arc->d_name);
-                token = strtok(nombre, " ");
-                val = getVal(token);
-                if(val >= 48 && val <= 57){}
+                closedir(player_dir);
+                jugarCarta(player_carta->d_name);
+                chdir(nombre_player_dir);
+                remove(player_carta->d_name);
+                chdir("..");
 
-
+                int val = getVal(token1);
+                switch (val)
+                {
+                    case 93:
+                        estado = 1;
+                        break;
+                    case 95:
+                        estado = 2;
+                        color = rand()%4+1;
+                        break;
+                    case 83:
+                        estado = 3;
+                        break;
+                    case 82:
+                        sentido = !sentido;
+                        break;
+                    default:
+                        color = rand()%4+1;
+                        break;
+                }
+                return;
             }
+        }
+        player_carta = readdir(player_dir);
     }
+    closedir(player_dir);
 
+    strcpy(nombre_carta, obtenerCarta(cant_cartas_sacadas++));
+    token1 = strtok(nombre_carta, " ");
+    token2 = strtok(NULL, " ");
+    if(!strcmp(token1, ultima_jugada1) || !strcmp(token2, ultima_jugada2))
+        {
+            jugarCarta(player_carta->d_name);
+            return;
+        }
+
+    entregarCarta(nombre_player_dir, carta);
 }
 
 
-int main() {
-    srand(time(0));
+int main()
+{
+    time_t t;
+    srand((unsigned)time(&t));
+    
     char *name = "cartas.txt";
     struct stat st = {0};
     //Se crea mazo
