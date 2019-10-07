@@ -38,10 +38,10 @@ int color=0;
 
 /*variable sentido
 indica el sentido de los turnos, cresciente o decresciente (1 2 3 o 1 4 3)
-0:  cresciente
-1:  decresciente
+1 :  cresciente
+-1:  decresciente
 */
-int sentido = 0;
+int sentido = 1;
 
 /*variable ultima_jugada 1 y 2
 indica la primera y segunda parte del nombre de la carta en lastCard para facilitar
@@ -321,6 +321,14 @@ void turno(int jugador)
     entregarCarta(nombre_player_dir, carta);
 }
 
+void mostrarCartas(int jugador)
+{
+    char dir_jugador[20];
+    sprintf("player%d", jugador);
+    chdir(dir_jugador);
+    system("ls");
+    chdir("..");
+}
 
 int main()
 {
@@ -406,5 +414,7 @@ int main()
 
     //listFiles("./mazo");
     repartirCartas();
+
+
     return 0;
 }
