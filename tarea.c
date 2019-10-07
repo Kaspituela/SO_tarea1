@@ -57,6 +57,33 @@ y poner la primera carta
 int cant_cartas_sacadas = 29;
 
 
+int isEmpty(int directorio)
+{
+/* revisa si algún directorio está vacío basado en un codigo para los directorios
+0:  revisa el maso
+n:  revisa la mano del jugador n
+*/
+    char dir_name[20];
+    if(directorio == 0) strcpy(dir_name, "mazo");
+    else sprintf(dir_name, "player%d", directorio);
+
+    DIR *dir = opendir(dir_name);
+    if(!dir)
+    {
+        printf("Se ha geneado un error isEmpty");
+        exit(0);
+    }
+    struct dirent *cartas_mazo = readdir(mazo);
+    while(cartas_mazo)
+    {
+        if((cartas_mazo->d_name)[0] != '.') return 1;
+        cartas_mazo = readdir(dir);
+    }
+    if(directorio == 0) printf("Se acabo el mazo F");
+    else printf("Gano el jugador %d", directorio);
+    exit(0);
+    
+}
 int getVal(char* palabra)
 {
     //obtiene la suma de los valores de cada caracter en la palabra
@@ -445,7 +472,10 @@ int main()
 
     
     repartirCartas();
-
+    while(isEmpty(0))
+    {
+        turno()
+    }
 
 
     return 0;
