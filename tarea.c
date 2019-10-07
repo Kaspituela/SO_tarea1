@@ -57,6 +57,16 @@ y poner la primera carta
 int cant_cartas_sacadas = 29;
 
 
+int getVal(char* palabra)
+{
+    //obtiene la suma de los valores de cada caracter en la palabra
+    int i, suma = 0;
+    for(i=0; palabra[i]; i++)
+        suma += (int)palabra[i];
+    return suma;
+}
+
+
 void entregarCarta(char *destino, char *carta){
     chdir(destino);
     FILE *fp;
@@ -121,7 +131,35 @@ void repartirCartas()
         entregarCarta("./player4",carta);
     }
     carta = obtenerCarta(28);
+
     entregarCarta("./lastCard",carta);
+
+    char *token1;
+    char aux[20];
+    strcpy(aux, carta);
+    token1 = strtok(aux, " ");
+    int v = getVal(token1);
+    if (v < 93) return;
+
+    switch (v)
+    {
+        case 93:
+            estado = 1;
+            break;
+        case 95:
+            estado = 2;
+            color = rand()%4+1;
+            break;
+        case 83:
+            estado = 3;
+            break;
+        case 82:
+            sentido = !sentido;
+            break;
+        default:
+            color = rand()%4+1;
+            break;
+    }
 
 }
 
@@ -187,14 +225,7 @@ void createCards(char *name, char *dir){
 }
 
 
-int getVal(char* palabra)
-{
-    //obtiene la suma de los valores de cada caracter en la palabra
-    int i, suma = 0;
-    for(i=0; palabra[i]; i++)
-        suma += (int)palabra[i];
-    return suma;
-}
+
 
 
 void jugarCarta(char *nombre)
@@ -324,7 +355,7 @@ void turno(int jugador)
 void mostrarCartas(int jugador)
 {
     char dir_jugador[20];
-    sprintf("player%d", jugador);
+    sprintf(dir_jugador, "player%d", jugador);
     chdir(dir_jugador);
     system("ls");
     chdir("..");
@@ -412,8 +443,9 @@ int main()
     }
 
 
-    //listFiles("./mazo");
+    
     repartirCartas();
+
 
 
     return 0;
