@@ -485,6 +485,9 @@ int main()
     repartirCartas();
       while(isEmpty(0))
     {
+        printf("Cartas del jugador : %d\n", jugador_actual);
+        mostrarCartas(jugador_actual);
+        printf("\n\n\n");
         turno(jugador_actual);
         next();
     }
