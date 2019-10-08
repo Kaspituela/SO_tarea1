@@ -172,13 +172,19 @@ void repartirCartas()
 
     entregarCarta("./lastCard",carta);
 
-    char *token1;
+    char *token1,*token2;
     char aux[20];
     strcpy(aux, carta);
     token1 = strtok(aux, " ");
+    token2 = strtok(NULL, " ");
     int v = getVal(token1);
-    if (v < 93) return;
+    strcpy(ultima_jugada1,token1);
+    strcpy(ultima_jugada2,token2);
 
+    printf("ultima_jugada:%s",ultima_jugada1);
+    printf("ultima_jugada2:%s",ultima_jugada2);
+    printf("aa::%s\n", token1);
+    if (v < 93) return;
     switch (v)
     {
         case 93:
@@ -273,6 +279,7 @@ void jugarCarta(char *nombre)
     system("rm -rf ./*");
     FILE *arc = fopen(nombre, "w");
     fclose(arc);
+    printf("Jugador %d, juega la carta : %s\n", jugador_actual, nombre);
     chdir("..");
 }
 
@@ -485,9 +492,9 @@ int main()
     repartirCartas();
       while(isEmpty(0))
     {
-        printf("Cartas del jugador : %d\n", jugador_actual);
-        mostrarCartas(jugador_actual);
-        printf("\n\n\n");
+      //  printf("Cartas del jugador : %d\n", jugador_actual);
+    //    mostrarCartas(jugador_actual);
+        //printf("\n\n\n");
         turno(jugador_actual);
         next();
     }
