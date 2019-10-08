@@ -64,7 +64,7 @@ void next()
     else
     {
         if (jugador_actual == 1) jugador_actual = 4;
-        else jugador_actual--;
+        else jugador_actual = jugador_actual-1;
     }
 }
 
@@ -181,9 +181,9 @@ void repartirCartas()
     strcpy(ultima_jugada1,token1);
     strcpy(ultima_jugada2,token2);
 
-    printf("ultima_jugada:%s",ultima_jugada1);
-    printf("ultima_jugada2:%s",ultima_jugada2);
-    printf("aa::%s\n", token1);
+    //printf("ultima_jugada:%s",ultima_jugada1);
+    //printf("ultima_jugada2:%s",ultima_jugada2);
+    //printf("aa::%s\n", token1);
     if (v < 93) return;
     switch (v)
     {
@@ -350,6 +350,7 @@ void turno(int jugador)
 
             if(!strcmp(token1, ultima_jugada1) || !strcmp(token2, ultima_jugada2))
             {
+                
                 closedir(player_dir);
                 jugarCarta(player_carta->d_name);
                 strcpy(ultima_jugada1, token1);
@@ -357,6 +358,7 @@ void turno(int jugador)
                 chdir(nombre_player_dir);
                 remove(player_carta->d_name);
                 chdir("..");
+
 
                 isEmpty(jugador);
 
@@ -380,6 +382,7 @@ void turno(int jugador)
                         color = rand()%4+1;
                         break;
                 }
+
                 return;
             }
         }
@@ -394,7 +397,7 @@ void turno(int jugador)
             jugarCarta(player_carta->d_name);
             return;
         }
-
+    printf("jugador %d no juega", jugador);
     entregarCarta(nombre_player_dir, carta);
 }
 
