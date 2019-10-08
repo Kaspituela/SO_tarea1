@@ -120,10 +120,8 @@ void entregarCarta(char *destino, char *carta){
 
 
 char* obtenerCarta(int cant){
-    char s[100];
     int i = 1;
     int num = rand()%(110 - cant) + 1;
-    //printf("%d\n", num);
     DIR *dir_actual;
     struct dirent *file;
     dir_actual = opendir("./mazo");
@@ -136,10 +134,7 @@ char* obtenerCarta(int cant){
                     closedir(dir_actual);
                     return obtenerCarta(cant);
                 }
-                //printf("%s\n", file->d_name);
                 strcpy(carta, file->d_name);
-                //printf("%s\n", carta);
-                //printf("%s\n", getcwd(s, 100));
                 chdir("mazo");
                 remove(carta);
                 chdir("..");
@@ -346,9 +341,6 @@ void turno(int jugador)
             token1 = strtok(nombre_carta, " ");
             token2 = strtok(NULL, " ");
 
-            printf("token1 : %s\n",token1 );
-            printf("token2 : %s\n",token2 );
-
             if(!strcmp(token1, ultima_jugada1) || !strcmp(token2, ultima_jugada2))
             {
                 closedir(player_dir);
@@ -387,7 +379,6 @@ void turno(int jugador)
         player_carta = readdir(player_dir);
     }
     closedir(player_dir);
-    printf("zona 1\n");
     strcpy(nombre_carta, obtenerCarta(cant_cartas_sacadas++));
     token1 = strtok(nombre_carta, " ");
     token2 = strtok(NULL, " ");
@@ -398,7 +389,6 @@ void turno(int jugador)
         }
 
     entregarCarta(nombre_player_dir, carta);
-    printf("zona 2\n");
 }
 
 void mostrarCartas(int jugador)
@@ -493,12 +483,9 @@ int main()
 
 
     repartirCartas();
-    int n = 0;
-    while(isEmpty(0))
+      while(isEmpty(0))
     {
-        printf("a%d\n", n++);
         turno(jugador_actual);
-        printf("b%d\n", n++);
         next();
     }
 
