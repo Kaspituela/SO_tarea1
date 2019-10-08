@@ -95,7 +95,7 @@ n:  revisa la mano del jugador n
         cartas_mazo = readdir(dir);
     }
     closedir(dir);
-    if(directorio == 0) printf("Se acabo el mazo F");
+    if(directorio == 0) printf("Se acabo el mazo F\n");
     else printf("Gano el jugador %d", directorio);
     exit(0);
 
