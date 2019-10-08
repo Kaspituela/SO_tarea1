@@ -6,7 +6,7 @@ Integrantes:
 
 Notas:
 
-El código fuente está en 'tarea.c', para compilar y ejecutar se debe escribir el comando 'make' dentro de la carpeta del repositorio 'SO_tarea1'. Esto compilará y posteriormente ejecutará el compilado 'main'.
+El código fuente está en 'tarea.c', para compilar y ejecutar se debe escribir el comando 'make tarea' dentro de la carpeta del repositorio 'SO_tarea1'. Esto compilará, luego al ejecutar el comando 'make run' se ejecutará el compilado 'main'.
 Para eliminar todos los directorios creados por el programa, se puede ejecutar el comando 'make rm', que también eliminará el ejecutable.
 
 Al ejecutar el programa, se crearán los directorios:
