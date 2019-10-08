@@ -56,6 +56,17 @@ y poner la primera carta
 */
 int cant_cartas_sacadas = 29;
 
+int jugador_actual = 1;
+
+void next()
+{
+    if(sentido == 1) jugador_actual = jugador_actual%4 + 1;
+    else
+    {
+        if (jugador_actual == 1) jugador_actual = 4;
+        else jugador_actual--;
+    }
+}
 
 int isEmpty(int directorio)
 {
@@ -73,12 +84,17 @@ n:  revisa la mano del jugador n
         printf("Se ha geneado un error isEmpty");
         exit(0);
     }
-    struct dirent *cartas_mazo = readdir(mazo);
+    struct dirent *cartas_mazo = readdir(dir);
     while(cartas_mazo)
     {
-        if((cartas_mazo->d_name)[0] != '.') return 1;
+        if((cartas_mazo->d_name)[0] != '.')
+        {
+            closedir(dir);
+            return 1;
+        }
         cartas_mazo = readdir(dir);
     }
+    closedir(dir);
     if(directorio == 0) printf("Se acabo el mazo F");
     else printf("Gano el jugador %d", directorio);
     exit(0);
@@ -107,7 +123,7 @@ char* obtenerCarta(int cant){
     char s[100];
     int i = 1;
     int num = rand()%(110 - cant) + 1;
-    printf("%d\n", num);
+    //printf("%d\n", num);
     DIR *dir_actual;
     struct dirent *file;
     dir_actual = opendir("./mazo");
@@ -120,10 +136,10 @@ char* obtenerCarta(int cant){
                     closedir(dir_actual);
                     return obtenerCarta(cant);
                 }
-                printf("%s\n", file->d_name);
+                //printf("%s\n", file->d_name);
                 strcpy(carta, file->d_name);
-                printf("%s\n", carta);
-                printf("%s\n", getcwd(s, 100));
+                //printf("%s\n", carta);
+                //printf("%s\n", getcwd(s, 100));
                 chdir("mazo");
                 remove(carta);
                 chdir("..");
@@ -330,6 +346,7 @@ void turno(int jugador)
             token1 = strtok(nombre_carta, " ");
             token2 = strtok(NULL, " ");
 
+            
             if(!strcmp(token1, ultima_jugada1) || !strcmp(token2, ultima_jugada2))
             {
                 closedir(player_dir);
@@ -339,6 +356,8 @@ void turno(int jugador)
                 chdir(nombre_player_dir);
                 remove(player_carta->d_name);
                 chdir("..");
+
+                isEmpty(jugador);
 
                 int val = getVal(token1);
                 switch (val)
@@ -366,7 +385,7 @@ void turno(int jugador)
         player_carta = readdir(player_dir);
     }
     closedir(player_dir);
-
+    printf("zona 1\n");
     strcpy(nombre_carta, obtenerCarta(cant_cartas_sacadas++));
     token1 = strtok(nombre_carta, " ");
     token2 = strtok(NULL, " ");
@@ -377,16 +396,16 @@ void turno(int jugador)
         }
 
     entregarCarta(nombre_player_dir, carta);
+    printf("zona 2\n");
 }
 
 void mostrarCartas(int jugador)
 {
-    char dir_jugador[20];
-    sprintf(dir_jugador, "player%d", jugador);
-    chdir(dir_jugador);
-    system("ls");
-    chdir("..");
+    char comando[50];
+    sprintf(comando, "ls ./player%d/", jugador);;
+    system(comando);
 }
+
 
 int main()
 {
@@ -472,9 +491,13 @@ int main()
 
     
     repartirCartas();
+    int n = 0;
     while(isEmpty(0))
     {
-        turno()
+        printf("a%d\n", n++);
+        turno(jugador_actual);
+        printf("b%d\n", n++);
+        next();
     }
 
 
