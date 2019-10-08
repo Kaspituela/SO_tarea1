@@ -98,7 +98,7 @@ n:  revisa la mano del jugador n
     if(directorio == 0) printf("Se acabo el mazo F");
     else printf("Gano el jugador %d", directorio);
     exit(0);
-    
+
 }
 int getVal(char* palabra)
 {
@@ -244,7 +244,7 @@ void createCards(char *name, char *dir){
         fclose(carta);
 
         //cambios de color (color)
-        sprintf(nombre, "color%d.txt", i+1);
+        sprintf(nombre, "color %d.txt", i+1);
         carta = fopen(nombre, "w");
         fclose(carta);
 
@@ -307,7 +307,7 @@ void turno(int jugador)
     {
         case 0:
             break;
-        
+
         case 1:
             masCartas(jugador, 2);
             estado = 0;
@@ -346,7 +346,9 @@ void turno(int jugador)
             token1 = strtok(nombre_carta, " ");
             token2 = strtok(NULL, " ");
 
-            
+            printf("token1 : %s\n",token1 );
+            printf("token2 : %s\n",token2 );
+
             if(!strcmp(token1, ultima_jugada1) || !strcmp(token2, ultima_jugada2))
             {
                 closedir(player_dir);
@@ -411,7 +413,7 @@ int main()
 {
     time_t t;
     srand((unsigned)time(&t));
-    
+
     char *name = "cartas.txt";
     struct stat st = {0};
     //Se crea mazo
@@ -489,7 +491,7 @@ int main()
     }
 
 
-    
+
     repartirCartas();
     int n = 0;
     while(isEmpty(0))
