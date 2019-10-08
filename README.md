@@ -19,3 +19,7 @@ Al ejecutar el programa, se crearán los directorios:
 cada uno contendrá archivos que representan cartas (108 en total).
 
 Además se imprimirá por pantalla las cartas que se van escogiendo para cada jugador y el directorio base.
+
+Entrega 2:
+Se realizaron distintas funciones para simular la logica del juego, junto con distintas variables que
+que facilitan el conocer el estado actual del juego, como la última carta jugada, efectos acumulados, etc.
