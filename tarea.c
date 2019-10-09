@@ -60,11 +60,15 @@ int jugador_actual = 1;
 
 void next()
 {
-    if(sentido == 1) jugador_actual = jugador_actual%4 + 1;
+    if(sentido == 1)
+    {
+        if(jugador_actual == 4) jugador_actual = 1;
+        else ++jugador_actual;
+    }
     else
     {
         if (jugador_actual == 1) jugador_actual = 4;
-        else jugador_actual--;
+        else --jugador_actual;
     }
 }
 
@@ -127,13 +131,10 @@ char* obtenerCarta(int cant){
     dir_actual = opendir("./mazo");
     if (dir_actual) {
         while ((file = readdir(dir_actual)) != NULL) {
-            if (i==num)
+            if (i++>=num)
             {
                 if (strcmp(file->d_name,".")==0 || strcmp(file->d_name,"..")==0)
-                {
-                    closedir(dir_actual);
-                    return obtenerCarta(cant);
-                }
+                    continue;
                 strcpy(carta, file->d_name);
                 chdir("mazo");
                 remove(carta);
@@ -141,7 +142,6 @@ char* obtenerCarta(int cant){
                 closedir(dir_actual);
                 break;
             }
-            i++;
         }
 
     } else {
@@ -181,9 +181,11 @@ void repartirCartas()
     strcpy(ultima_jugada1,token1);
     strcpy(ultima_jugada2,token2);
 
-    printf("ultima_jugada:%s",ultima_jugada1);
-    printf("ultima_jugada2:%s",ultima_jugada2);
-    printf("aa::%s\n", token1);
+    printf("ultima_jugada: %s\n",ultima_jugada1);
+    printf("ultima_jugada2: %s\n",ultima_jugada2);
+    printf("token 1: %s\n", token1);
+    printf("token 2: %s\n", token2);
+
     if (v < 93) return;
     switch (v)
     {
@@ -216,51 +218,51 @@ void createCards(char *name, char *dir){
     for(i=0; i<4; i++)
     {
         //0s
-        sprintf(nombre, "0 %s.txt", colores[i]);
+        sprintf(nombre, "0 %s .txt", colores[i]);
         carta = fopen(nombre, "w");
         fclose(carta);
 
         //+2s
-        sprintf(nombre, "+2 %s.txt", colores[i]);
+        sprintf(nombre, "+2 %s .txt", colores[i]);
         carta = fopen(nombre, "w");
         fclose(carta);
-        sprintf(nombre, "+2 %s 2.txt", colores[i]);
+        sprintf(nombre, "+2 %s 2 .txt", colores[i]);
         carta = fopen(nombre, "w");
         fclose(carta);
 
         //reversas (R)
-        sprintf(nombre, "R %s.txt", colores[i]);
+        sprintf(nombre, "R %s .txt", colores[i]);
         carta = fopen(nombre, "w");
         fclose(carta);
-        sprintf(nombre, "R %s 2.txt", colores[i]);
+        sprintf(nombre, "R %s 2 .txt", colores[i]);
         carta = fopen(nombre, "w");
         fclose(carta);
 
         //saltos (S)
-        sprintf(nombre, "S %s.txt", colores[i]);
+        sprintf(nombre, "S %s .txt", colores[i]);
         carta = fopen(nombre, "w");
         fclose(carta);
-        sprintf(nombre, "S %s 2.txt", colores[i]);
+        sprintf(nombre, "S %s 2 .txt", colores[i]);
         carta = fopen(nombre, "w");
         fclose(carta);
 
         //cambios de color (color)
-        sprintf(nombre, "color %d.txt", i+1);
+        sprintf(nombre, "color %d .txt", i+1);
         carta = fopen(nombre, "w");
         fclose(carta);
 
         //+4
-        sprintf(nombre, "+4 %d.txt", i+1);
+        sprintf(nombre, "+4 %d .txt", i+1);
         carta = fopen(nombre, "w");
         fclose(carta);
 
         //del 1 al 9
         for(j=1; j<10; j++)
         {
-            sprintf(nombre, "%d %s.txt", j, colores[i]);
+            sprintf(nombre, "%d %s .txt", j, colores[i]);
             carta = fopen(nombre, "w");
             fclose(carta);
-            sprintf(nombre, "%d %s 2.txt", j, colores[i]);
+            sprintf(nombre, "%d %s 2 .txt", j, colores[i]);
             carta = fopen(nombre, "w");
             fclose(carta);
         }
@@ -278,7 +280,10 @@ void jugarCarta(char *nombre)
     chdir("lastCard");
     system("rm -rf ./*");
     FILE *arc = fopen(nombre, "w");
+    printf("%s\n", nombre);
+    printf("test\n");
     fclose(arc);
+    printf("test2\n");
     printf("Jugador %d, juega la carta : %s\n", jugador_actual, nombre);
     chdir("..");
 }
@@ -311,15 +316,18 @@ void turno(int jugador)
             break;
 
         case 1:
+            printf("jugador %d, saca 2\n", jugador);
             masCartas(jugador, 2);
             estado = 0;
             return;
 
         case 2:
+            printf("jugador %d, saca 4\n", jugador);
             masCartas(jugador, 4);
             estado = 0;
             return;
         case 3:
+            printf("jugador %d, es saltado\n", jugador);
             estado = 0;
             return;
 
@@ -330,8 +338,12 @@ void turno(int jugador)
         case 5:
             printf("Esto no debería pasar COLOR\n");
             exit(0);
+
+        default:
+            printf("Wut O.o");
+            exit(0);
     }
-    char *token1, *token2, nombre_carta[20];
+    char *token1, *token2, *token3, nombre_carta[20];
 
     char nombre_player_dir[20];//nombre del directorio del jugador
     sprintf(nombre_player_dir, "player%d", jugador);
@@ -340,20 +352,22 @@ void turno(int jugador)
     struct dirent *player_carta;
 
     player_carta = readdir(player_dir);
-    while(player_carta)
+    while(player_carta != NULL)
     {
         if((player_carta->d_name)[0] != '.')
         {
             strcpy(nombre_carta, player_carta->d_name);
             token1 = strtok(nombre_carta, " ");
             token2 = strtok(NULL, " ");
+            token3 = strtok(NULL, " ");
 
             if(!strcmp(token1, ultima_jugada1) || !strcmp(token2, ultima_jugada2))
             {
-                closedir(player_dir);
+                //closedir(player_dir);
                 jugarCarta(player_carta->d_name);
                 strcpy(ultima_jugada1, token1);
                 strcpy(ultima_jugada2, token2);
+
                 chdir(nombre_player_dir);
                 remove(player_carta->d_name);
                 chdir("..");
@@ -374,12 +388,12 @@ void turno(int jugador)
                         estado = 3;
                         break;
                     case 82:
-                        sentido = !sentido;
+                        sentido = sentido == 1? 0: 1;
                         break;
                     default:
                         color = rand()%4+1;
-                        break;
                 }
+                closedir(player_dir);
                 return;
             }
         }
@@ -389,12 +403,37 @@ void turno(int jugador)
     strcpy(nombre_carta, obtenerCarta(cant_cartas_sacadas++));
     token1 = strtok(nombre_carta, " ");
     token2 = strtok(NULL, " ");
+    token3 = strtok(NULL, " ");
+
     if(!strcmp(token1, ultima_jugada1) || !strcmp(token2, ultima_jugada2))
         {
             jugarCarta(player_carta->d_name);
+            strcpy(ultima_jugada1, token1);
+            strcpy(ultima_jugada2, token2);
+
+            int val = getVal(token1);
+            switch (val)
+            {
+                case 93:
+                    estado = 1;
+                    break;
+                case 95:
+                    estado = 2;
+                    color = rand()%4+1;
+                    break;
+                case 83:
+                    estado = 3;
+                    break;
+                case 82:
+                    sentido = sentido == 1? 0: 1;
+                    break;
+                default:
+                    color = rand()%4+1;
+            }
             return;
         }
 
+    printf("jugador %d, no tiene para jugar\n", jugador);
     entregarCarta(nombre_player_dir, carta);
 }
 
@@ -490,7 +529,7 @@ int main()
 
 
     repartirCartas();
-      while(isEmpty(0))
+    while(isEmpty(0))
     {
       //  printf("Cartas del jugador : %d\n", jugador_actual);
     //    mostrarCartas(jugador_actual);
