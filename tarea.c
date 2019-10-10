@@ -100,7 +100,7 @@ n:  revisa la mano del jugador n
     }
     closedir(dir);
     if(directorio == 0) printf("Se acabo el mazo F\n");
-    else printf("Gano el jugador %d", directorio);
+    else printf("Gano el jugador %d\n", directorio);
     exit(0);
 
 }
@@ -123,7 +123,7 @@ void entregarCarta(char *destino){
 }
 
 
-char* obtenerCarta()
+void obtenerCarta()
 {
     isEmpty(0);
     DIR *mazo = opendir("mazo");
@@ -142,14 +142,13 @@ char* obtenerCarta()
             if(rand()%2 == 0 )
             {
                 closedir(mazo);
-                return carta;
+                return;
             }
         }
         arc_mazo = readdir(mazo);
     }
     printf("control 1");
     closedir(mazo);
-    return carta;
 }
 
 void repartirCartas()
@@ -344,9 +343,9 @@ void turno(int jugador)
             printf("Wut O.o");
             exit(0);
     }
-    char *token1, *token2, nombre_carta[20];
+    char *token1, *token2, nombre_carta[50];
 
-    char nombre_player_dir[20];//nombre del directorio del jugador
+    char nombre_player_dir[50];//nombre del directorio del jugador
     sprintf(nombre_player_dir, "player%d", jugador);
 
     DIR *player_dir = opendir(nombre_player_dir);
@@ -377,6 +376,8 @@ void turno(int jugador)
                 remove(player_carta->d_name);
                 chdir("..");
 
+                
+
                 isEmpty(jugador);
 
                 int val = getVal(token1);
@@ -405,7 +406,8 @@ void turno(int jugador)
         player_carta = readdir(player_dir);
     }
     closedir(player_dir);
-    strcpy(nombre_carta, obtenerCarta());
+    obtenerCarta();
+    strcpy(nombre_carta, carta);
     token1 = strtok(nombre_carta, " ");
     token2 = strtok(NULL, " ");
     if(!strcmp(token1, ultima_jugada1) || !strcmp(token2, ultima_jugada2))
@@ -533,7 +535,7 @@ int main(int argc, char const *argv[])
 
 
     repartirCartas();
-    /*
+    
     while(isEmpty(0))
     {
       //  printf("Cartas del jugador : %d\n", jugador_actual);
@@ -542,7 +544,7 @@ int main(int argc, char const *argv[])
         turno(jugador_actual);
         next();
     }
-    */
+    
     
 
    //testing
