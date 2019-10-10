@@ -85,7 +85,7 @@ n:  revisa la mano del jugador n
     DIR *dir = opendir(dir_name);
     if(!dir)
     {
-        printf("Se ha geneado un error isEmpty");
+        printf("Se ha geneado un error isEmpty\n");
         exit(0);
     }
     struct dirent *cartas_mazo = readdir(dir);
@@ -124,17 +124,22 @@ void entregarCarta(char *destino, char *carta){
 
 
 char* obtenerCarta(int cant){
+    isEmpty(0);
     int i = 1;
     int num = rand()%(110 - cant) + 1;
     DIR *dir_actual;
     struct dirent *file;
     dir_actual = opendir("./mazo");
     if (dir_actual) {
-        while ((file = readdir(dir_actual)) != NULL) {
+        while ((file = readdir(dir_actual)) != NULL)
+        {
             if (i++>=num)
             {
                 if (strcmp(file->d_name,".")==0 || strcmp(file->d_name,"..")==0)
-                    continue;
+                {
+                    closedir(dir_actual);
+                    obtenerCarta(cant);
+                }
                 strcpy(carta, file->d_name);
                 chdir("mazo");
                 remove(carta);
@@ -186,7 +191,7 @@ void repartirCartas()
     printf("token 1: %s\n", token1);
     printf("token 2: %s\n", token2);
 
-    if (v < 93) return;
+    if (v < 82) return;
     switch (v)
     {
         case 93:
@@ -280,10 +285,7 @@ void jugarCarta(char *nombre)
     chdir("lastCard");
     system("rm -rf ./*");
     FILE *arc = fopen(nombre, "w");
-    printf("%s\n", nombre);
-    printf("test\n");
     fclose(arc);
-    printf("test2\n");
     printf("Jugador %d, juega la carta : %s\n", jugador_actual, nombre);
     chdir("..");
 }
@@ -343,7 +345,7 @@ void turno(int jugador)
             printf("Wut O.o");
             exit(0);
     }
-    char *token1, *token2, *token3, nombre_carta[20];
+    char *token1, *token2, nombre_carta[20];
 
     char nombre_player_dir[20];//nombre del directorio del jugador
     sprintf(nombre_player_dir, "player%d", jugador);
@@ -359,7 +361,6 @@ void turno(int jugador)
             strcpy(nombre_carta, player_carta->d_name);
             token1 = strtok(nombre_carta, " ");
             token2 = strtok(NULL, " ");
-            token3 = strtok(NULL, " ");
 
             if(!strcmp(token1, ultima_jugada1) || !strcmp(token2, ultima_jugada2))
             {
@@ -403,8 +404,6 @@ void turno(int jugador)
     strcpy(nombre_carta, obtenerCarta(cant_cartas_sacadas++));
     token1 = strtok(nombre_carta, " ");
     token2 = strtok(NULL, " ");
-    token3 = strtok(NULL, " ");
-
     if(!strcmp(token1, ultima_jugada1) || !strcmp(token2, ultima_jugada2))
         {
             jugarCarta(player_carta->d_name);
@@ -445,8 +444,9 @@ void mostrarCartas(int jugador)
 }
 
 
-int main()
+int main(int argc, char const *argv[])
 {
+    
     time_t t;
     srand((unsigned)time(&t));
 
@@ -529,15 +529,32 @@ int main()
 
 
     repartirCartas();
+    
+
+    /*
     while(isEmpty(0))
     {
       //  printf("Cartas del jugador : %d\n", jugador_actual);
-    //    mostrarCartas(jugador_actual);
+    //  mostrarCartas(jugador_actual);
         //printf("\n\n\n");
         turno(jugador_actual);
         next();
     }
 
+    */
 
+   //testing
+   
+   /*
+   next rdy
+   isEmpty rdy
+   getVal rdy
+   entregarCarta rdy
+   obtenerCarta rdy
+   epartirCartas rdy
+   createCards rdy
+   jugarCarta rdy
+   */
+    
     return 0;
 }
