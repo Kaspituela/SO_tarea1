@@ -22,7 +22,7 @@ int estado = 0;
 /* variable carta
 Permite el paso de string entre funciones a través de memoria estática
 */
-char carta[20];
+char carta[200];
 
 /*variable color
 Se revisa el valor de esta carta cuando se acumula un efecto de cambio de color
@@ -114,7 +114,7 @@ int getVal(char* palabra)
 }
 
 
-void entregarCarta(char *destino, char *carta){
+void entregarCarta(char *destino){
     chdir(destino);
     FILE *fp;
     fp = fopen(carta,"w");
@@ -123,59 +123,55 @@ void entregarCarta(char *destino, char *carta){
 }
 
 
-char* obtenerCarta(int cant){
+char* obtenerCarta()
+{
     isEmpty(0);
-    int i = 1;
-    int num = rand()%(110 - cant) + 1;
-    DIR *dir_actual;
-    struct dirent *file;
-    dir_actual = opendir("./mazo");
-    if (dir_actual) {
-        while ((file = readdir(dir_actual)) != NULL)
-        {
-            if (i++>=num)
-            {
-                if (strcmp(file->d_name,".")==0 || strcmp(file->d_name,"..")==0)
-                {
-                    closedir(dir_actual);
-                    obtenerCarta(cant);
-                }
-                strcpy(carta, file->d_name);
-                chdir("mazo");
-                remove(carta);
-                chdir("..");
-                closedir(dir_actual);
-                break;
-            }
-        }
-
-    } else {
-        printf("Error al abrir directorio\n");
+    DIR *mazo = opendir("mazo");
+    if(!mazo)
+    {
+        printf("Error al abrir mazo");
         exit(0);
     }
+    struct dirent *arc_mazo;
+    arc_mazo = readdir(mazo);
+    while(arc_mazo != NULL)
+    {
+        if((arc_mazo->d_name)[0] != '.')
+        {
+            strcpy(carta, arc_mazo->d_name);
+            if(rand()%2 == 0 )
+            {
+                closedir(mazo);
+                return carta;
+            }
+        }
+        arc_mazo = readdir(mazo);
+    }
+    printf("control 1");
+    closedir(mazo);
     return carta;
 }
 
 void repartirCartas()
 {
-    char *carta;
     int i;
-    for (i = 0; i < 7; i++) {
-        carta = obtenerCarta(i*4);
-        entregarCarta("./player1",carta);
+    for (i = 0; i < 7; i++)
+    {
+        obtenerCarta();
+        entregarCarta("./player1");
 
-        carta = obtenerCarta(i*4+1);
-        entregarCarta("./player2",carta);
+        obtenerCarta();
+        entregarCarta("./player2");
 
-        carta = obtenerCarta(i*4+2);
-        entregarCarta("./player3",carta);
+        obtenerCarta();
+        entregarCarta("./player3");
 
-        carta = obtenerCarta(i*4+3);
-        entregarCarta("./player4",carta);
+        obtenerCarta();
+        entregarCarta("./player4");
     }
-    carta = obtenerCarta(28);
+    obtenerCarta();
 
-    entregarCarta("./lastCard",carta);
+    entregarCarta("./lastCard");
 
     char *token1,*token2;
     char aux[20];
@@ -215,7 +211,7 @@ void repartirCartas()
 }
 
 void createCards(char *name, char *dir){
-    FILE *carta;
+    FILE *carta_;
     char nombre[20];
     chdir(dir);
     char colores[4][9] = {"azul", "rojo", "verde", "amarillo"};
@@ -224,52 +220,52 @@ void createCards(char *name, char *dir){
     {
         //0s
         sprintf(nombre, "0 %s .txt", colores[i]);
-        carta = fopen(nombre, "w");
-        fclose(carta);
+        carta_ = fopen(nombre, "w");
+        fclose(carta_);
 
         //+2s
         sprintf(nombre, "+2 %s .txt", colores[i]);
-        carta = fopen(nombre, "w");
-        fclose(carta);
+        carta_ = fopen(nombre, "w");
+        fclose(carta_);
         sprintf(nombre, "+2 %s 2 .txt", colores[i]);
-        carta = fopen(nombre, "w");
-        fclose(carta);
+        carta_ = fopen(nombre, "w");
+        fclose(carta_);
 
         //reversas (R)
         sprintf(nombre, "R %s .txt", colores[i]);
-        carta = fopen(nombre, "w");
-        fclose(carta);
+        carta_ = fopen(nombre, "w");
+        fclose(carta_);
         sprintf(nombre, "R %s 2 .txt", colores[i]);
-        carta = fopen(nombre, "w");
-        fclose(carta);
+        carta_ = fopen(nombre, "w");
+        fclose(carta_);
 
         //saltos (S)
         sprintf(nombre, "S %s .txt", colores[i]);
-        carta = fopen(nombre, "w");
-        fclose(carta);
+        carta_ = fopen(nombre, "w");
+        fclose(carta_);
         sprintf(nombre, "S %s 2 .txt", colores[i]);
-        carta = fopen(nombre, "w");
-        fclose(carta);
+        carta_ = fopen(nombre, "w");
+        fclose(carta_);
 
         //cambios de color (color)
         sprintf(nombre, "color %d .txt", i+1);
-        carta = fopen(nombre, "w");
-        fclose(carta);
+        carta_ = fopen(nombre, "w");
+        fclose(carta_);
 
         //+4
         sprintf(nombre, "+4 %d .txt", i+1);
-        carta = fopen(nombre, "w");
-        fclose(carta);
+        carta_ = fopen(nombre, "w");
+        fclose(carta_);
 
         //del 1 al 9
         for(j=1; j<10; j++)
         {
             sprintf(nombre, "%d %s .txt", j, colores[i]);
-            carta = fopen(nombre, "w");
-            fclose(carta);
+            carta_ = fopen(nombre, "w");
+            fclose(carta_);
             sprintf(nombre, "%d %s 2 .txt", j, colores[i]);
-            carta = fopen(nombre, "w");
-            fclose(carta);
+            carta_ = fopen(nombre, "w");
+            fclose(carta_);
         }
     }
     chdir("..");
@@ -299,9 +295,12 @@ void masCartas(int jugador, int cantidad)
     sprintf(s, "player%d", jugador);
     for(i=0; i<cantidad; i++)
     {
-        obtenerCarta(cant_cartas_sacadas++);
-        entregarCarta(s, carta);
+        printf("control 1");
+        obtenerCarta();
+        entregarCarta(s);
+        printf("control 2");
     }
+    printf("%s\n", s);
 }
 
 
@@ -351,6 +350,11 @@ void turno(int jugador)
     sprintf(nombre_player_dir, "player%d", jugador);
 
     DIR *player_dir = opendir(nombre_player_dir);
+    if(!player_dir)
+    {
+        printf("Error al abrir %s\n", nombre_player_dir);
+        exit(0);
+    }
     struct dirent *player_carta;
 
     player_carta = readdir(player_dir);
@@ -401,7 +405,7 @@ void turno(int jugador)
         player_carta = readdir(player_dir);
     }
     closedir(player_dir);
-    strcpy(nombre_carta, obtenerCarta(cant_cartas_sacadas++));
+    strcpy(nombre_carta, obtenerCarta());
     token1 = strtok(nombre_carta, " ");
     token2 = strtok(NULL, " ");
     if(!strcmp(token1, ultima_jugada1) || !strcmp(token2, ultima_jugada2))
@@ -433,7 +437,7 @@ void turno(int jugador)
         }
 
     printf("jugador %d, no tiene para jugar\n", jugador);
-    entregarCarta(nombre_player_dir, carta);
+    entregarCarta(nombre_player_dir);
 }
 
 void mostrarCartas(int jugador)
@@ -529,8 +533,6 @@ int main(int argc, char const *argv[])
 
 
     repartirCartas();
-    
-
     /*
     while(isEmpty(0))
     {
@@ -540,8 +542,8 @@ int main(int argc, char const *argv[])
         turno(jugador_actual);
         next();
     }
-
     */
+    
 
    //testing
    
@@ -555,6 +557,8 @@ int main(int argc, char const *argv[])
    createCards rdy
    jugarCarta rdy
    */
+    //printf("control 1");
+    //masCartas(1, 4);
     
     return 0;
 }
