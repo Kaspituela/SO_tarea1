@@ -141,12 +141,18 @@ void obtenerCarta()
             strcpy(carta, arc_mazo->d_name);
             if(rand()%2 == 0 )
             {
+                chdir("mazo");
+                remove(carta);
+                chdir("..");
                 closedir(mazo);
                 return;
             }
         }
         arc_mazo = readdir(mazo);
     }
+    chdir("mazo");
+    remove(carta);
+    chdir("..");
     printf("control 1");
     closedir(mazo);
 }
@@ -364,10 +370,12 @@ void turno(int jugador)
             strcpy(nombre_carta, player_carta->d_name);
             token1 = strtok(nombre_carta, " ");
             token2 = strtok(NULL, " ");
-
+            printf("token1 : %s\n", token1);
+            printf("token2 : %s\n", token2);
             if(!strcmp(token1, ultima_jugada1) || !strcmp(token2, ultima_jugada2))
             {
                 //closedir(player_dir);
+                printf("carta : %s\n", player_carta->d_name);
                 jugarCarta(player_carta->d_name);
                 strcpy(ultima_jugada1, token1);
                 strcpy(ultima_jugada2, token2);
@@ -376,7 +384,7 @@ void turno(int jugador)
                 remove(player_carta->d_name);
                 chdir("..");
 
-                
+
 
                 isEmpty(jugador);
 
@@ -410,9 +418,13 @@ void turno(int jugador)
     strcpy(nombre_carta, carta);
     token1 = strtok(nombre_carta, " ");
     token2 = strtok(NULL, " ");
+    printf("token11: %s\n", token1);
+    printf("token22: %s\n", token2);
+    printf("ultima jugada : %s\n", ultima_jugada1);
+    printf("ultima jugada2 : %s\n", ultima_jugada2);
     if(!strcmp(token1, ultima_jugada1) || !strcmp(token2, ultima_jugada2))
         {
-            jugarCarta(player_carta->d_name);
+            jugarCarta(carta);
             strcpy(ultima_jugada1, token1);
             strcpy(ultima_jugada2, token2);
 
@@ -452,7 +464,7 @@ void mostrarCartas(int jugador)
 
 int main(int argc, char const *argv[])
 {
-    
+
     time_t t;
     srand((unsigned)time(&t));
 
@@ -533,10 +545,9 @@ int main(int argc, char const *argv[])
     }
 
 
-
     repartirCartas();
-    
-    while(isEmpty(0))
+
+  while(isEmpty(0))
     {
       //  printf("Cartas del jugador : %d\n", jugador_actual);
     //  mostrarCartas(jugador_actual);
@@ -544,11 +555,10 @@ int main(int argc, char const *argv[])
         turno(jugador_actual);
         next();
     }
-    
-    
+
 
    //testing
-   
+
    /*
    next rdy
    isEmpty rdy
@@ -561,6 +571,5 @@ int main(int argc, char const *argv[])
    */
     //printf("control 1");
     //masCartas(1, 4);
-    
     return 0;
 }
