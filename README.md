@@ -20,6 +20,6 @@ cada uno contendrá archivos que representan cartas (108 en total).
 
 Además se imprimirá por pantalla las cartas que se van escogiendo para cada jugador y el directorio base.
 
-Entrega 2:
-Se realizaron distintas funciones para simular la logica del juego, junto con distintas variables que
-que facilitan el conocer el estado actual del juego, como la última carta jugada, efectos acumulados, etc.
+Consideraciones:
+-Los inputs que se soliciten mediante la terminal deben ser enteros positivos, porque al entregar un caracter el programa deja de funcionar.
+-Al ejecutar el programa se juega como jugador1 y los otros 3 jugadores son procesos que juegan por sí solos, estos jugadores revisan su mazo y juegan la primera carta que cumpla todas las restricciones. 
