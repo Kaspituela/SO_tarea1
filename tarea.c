@@ -492,6 +492,7 @@ void jugarSolo(int jugador){
   obtenerCarta("mazo");
   printf("Jugador%d roba una carta porque no puede jugar alguna\n", jugador_actual);
   strcpy(nombre_carta, carta);
+  printf("Carta robada: %s\n", strtok(nombre_carta,".txt"));
   flag = verificarCarta();
   if (flag) {
     jugarCarta(carta);
