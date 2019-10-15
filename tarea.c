@@ -64,7 +64,17 @@ void next()
         else --jugador_actual;
     }
 }
-
+void killProcess(){
+  int pid;
+  char command[50];
+  if (jugador_actual==1)
+    pid = getpid();
+  else
+    pid = getppid();
+  sprintf(command,"kill -9 %d",pid);
+  system(command);
+  return;
+}
 int isEmpty(int directorio)
 {
 /* revisa si algún directorio está vacío basado en un codigo para los directorios
@@ -92,8 +102,14 @@ n:  revisa la mano del jugador n
         cartas_mazo = readdir(dir);
     }
     closedir(dir);
-    if(directorio == 0) printf("Se acabo el mazo F\n");
-    else printf("Gano el jugador %d\n", directorio);
+    if(directorio == 0) {
+    printf("Se acabo el mazo F\n");
+    killProcess();
+    }
+    else{
+    printf("Gano el jugador %d\n", directorio);
+    killProcess();
+    }
     return 0;
 }
 int getVal(char* palabra)
@@ -335,7 +351,6 @@ void masCartas(int jugador, int cantidad)
         obtenerCarta("mazo");
         entregarCarta(s);
     }
-    printf("%s\n", s);
 }
 
 int verificarCarta(){
@@ -531,79 +546,124 @@ void turno(int jugador)
     } else {
       int eleccion,cantidad;
       printf("Cartas: \n");
+      printf("[0] Robar\n");
       cantidad = mostrarCartas(jugador);
       printf("Elija una carta\n");
       while (1) {
         scanf("%d", &eleccion);
-        if (eleccion >=1 && eleccion <=cantidad)
+        if (eleccion >=0 && eleccion <=cantidad)
           break;
         else
           printf("Eleccion incorrecta\n");
       }
 
-      char nombre_player_dir[50], nombre_carta[50], *token1,*token2;//nombre del directorio del jugador
-      int i = 0;
-      sprintf(nombre_player_dir, "player%d", jugador);
+      if (eleccion != 0) {
+        char nombre_player_dir[50], nombre_carta[50], *token1,*token2;//nombre del directorio del jugador
+        int i = 0;
+        sprintf(nombre_player_dir, "player%d", jugador);
 
-      DIR *player_dir = opendir(nombre_player_dir);
-      if(!player_dir)
-      {
-          printf("Error al abrir %s\n", nombre_player_dir);
-          exit(0);
+        DIR *player_dir = opendir(nombre_player_dir);
+        if(!player_dir)
+        {
+            printf("Error al abrir %s\n", nombre_player_dir);
+            exit(0);
+        }
+
+        struct dirent *player_carta;
+
+        player_carta = readdir(player_dir);
+        while(player_carta != NULL)
+        {
+            if((player_carta->d_name)[0] != '.')
+            {
+                i++;
+                if (i == eleccion) {
+                  strcpy(carta, player_carta->d_name);
+                  break;
+                }
+            }
+            player_carta = readdir(player_dir);
+        }
+        closedir(player_dir);
+        printf("carta: %s\n", carta);
+        i = verificarCarta();
+        switch (i) {
+          case 0:
+            printf("La carta no cumple las reglas, robas una carta\n");
+            obtenerCarta("mazo");
+            entregarCarta("./player1");
+            token1 = strtok(carta,".txt");
+            printf("El jugador%d roba la carta %s\n", jugador, token1);
+            break;
+          case 1:
+            strcpy(nombre_carta,carta);
+            token1 = strtok(nombre_carta, " ");
+            setVal(token1);
+            if (!strcmp("color",token1) || getVal(token1) == 95) {
+              printf("[1] Azul\n");
+              printf("[2] Rojo\n");
+              printf("[3] Verde\n");
+              printf("[4] Amarillo\n");
+              printf("Elija un color:\n");
+              scanf("%d", &color);
+            }
+            token2 = strtok(NULL, " ");
+            jugarCarta(carta);
+            strcpy(ultima_jugada1, token1);
+            strcpy(ultima_jugada2, token2);
+
+            chdir(nombre_player_dir);
+            remove(carta);
+            chdir("..");
+
+            isEmpty(jugador);
+            break;
+          default:
+            printf("Error de validar\n");
+            exit(0);
       }
+    } else{
+      int sel,flag;
+      char nombre_carta[50],*token1,*token2;
+      obtenerCarta("mazo");
+      strcpy(nombre_carta,carta);
+      entregarCarta("./player1");
+      token1 = strtok(nombre_carta,".txt");
+      printf("El jugador%d roba la carta %s\n", jugador, token1);
+      printf("¿Quieres jugarlo?\n[1]Si\n[2]No\n");
+      scanf("%d", &sel);
+      if (sel) {
+        flag = verificarCarta();
+        if (flag) {
+            strcpy(nombre_carta,carta);
+            token1 = strtok(nombre_carta, " ");
+            setVal(token1);
+            if (!strcmp("color",token1) || getVal(token1) == 95) {
+              printf("[1] Azul\n");
+              printf("[2] Rojo\n");
+              printf("[3] Verde\n");
+              printf("[4] Amarillo\n");
+              printf("Elija un color:\n");
+              scanf("%d", &color);
+            }
+            token2 = strtok(NULL, " ");
+            jugarCarta(carta);
+            strcpy(ultima_jugada1, token1);
+            strcpy(ultima_jugada2, token2);
 
-      struct dirent *player_carta;
+            chdir("player1");
+            remove(carta);
+            chdir("..");
 
-      player_carta = readdir(player_dir);
-      while(player_carta != NULL)
-      {
-          if((player_carta->d_name)[0] != '.')
-          {
-              i++;
-              if (i == eleccion) {
-                strcpy(carta, player_carta->d_name);
-                break;
-              }
-          }
-          player_carta = readdir(player_dir);
-      }
-      closedir(player_dir);
-      printf("carta: %s\n", carta);
-      i = verificarCarta();
-      switch (i) {
-        case 0:
+            isEmpty(jugador);
+        } else {
           printf("La carta no cumple las reglas, robas una carta\n");
           obtenerCarta("mazo");
           entregarCarta("./player1");
           token1 = strtok(carta,".txt");
           printf("El jugador%d roba la carta %s\n", jugador, token1);
-          break;
-        case 1:
-          strcpy(nombre_carta,carta);
-          token1 = strtok(nombre_carta, " ");
-          setVal(token1);
-          if (!strcmp("color",token1) || getVal(token1) == 95) {
-            printf("[1] Azul\n");
-            printf("[2] Rojo\n");
-            printf("[3] Verde\n");
-            printf("[4] Amarillo\n");
-            printf("Elija un color:\n");
-            scanf("%d", &color);
-          }
-          token2 = strtok(NULL, " ");
-          jugarCarta(carta);
-          strcpy(ultima_jugada1, token1);
-          strcpy(ultima_jugada2, token2);
-
-          chdir(nombre_player_dir);
-          remove(carta);
-          chdir("..");
-
-          isEmpty(jugador);
-          break;
-        default:
-          printf("Error de validar\n");
-          exit(0);
+        }
+      }
     }
   }
 }
@@ -759,7 +819,7 @@ int main(int argc, char const *argv[])
         if (getpid()==pids[0]) {
           if (jugador_actual==1) {
             printf("\n\n\n");
-            printf("Turno del Jugador%d %d,%d,c %d\n",jugador_actual,estado,sentido,color );
+            printf("Turno del Jugador\n");
             updateLast();
             if (color!=0)
               printColor();
@@ -799,13 +859,14 @@ int main(int argc, char const *argv[])
         if (getpid()==pids[1]) {
           if (jugador_actual==2) {
             printf("\n\n\n");
-            printf(" Turno del Jugador%d %d,%d,c %d\n",jugador_actual,estado,sentido,color );
+            printf(" Turno del Jugador\n");
             updateLast();
             if (color!=0)
               printColor();
             mostrarCartas(jugador_actual);
             turno(jugador_actual);
             next();
+            printf("[Press Enter]");
             getchar();
             close(p0[0]);
             write(p0[1], &jugador_actual, 1);
@@ -841,13 +902,14 @@ int main(int argc, char const *argv[])
         if (getpid()==pids[2]) {
           if (jugador_actual==3) {
             printf("\n\n\n");
-            printf("Turno del jugador%d %d,%d,c %d\n",jugador_actual,estado,sentido,color );
+            printf("Turno del jugador\n");
             updateLast();
             if (color!=0)
               printColor();
             mostrarCartas(jugador_actual);
             turno(jugador_actual);
             next();
+            printf("[Press Enter]");
             getchar();
             close(p0[0]);
             write(p0[1], &jugador_actual, 1);
@@ -883,13 +945,14 @@ int main(int argc, char const *argv[])
         if (getpid()==pids[3]) {
           if (jugador_actual==4) {
             printf("\n\n\n");
-            printf("Turno del jugador%d %d,%d,c %d\n",jugador_actual,estado,sentido,color );
+            printf("Turno del jugador\n");
             updateLast();
             if (color!=0)
               printColor();
             mostrarCartas(jugador_actual);
             turno(jugador_actual);
             next();
+            printf("[Press Enter]");
             getchar();
             close(p0[0]);
             write(p0[1], &jugador_actual, 1);
@@ -922,7 +985,5 @@ int main(int argc, char const *argv[])
           }
         }
    }
-   //Falta agregarle texto cuand ono tiene y roba para jugar una, mostrar sus cartas, apretar enter , etc
-   //testing
   exit(0);
 }
