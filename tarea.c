@@ -819,7 +819,7 @@ int main(int argc, char const *argv[])
         if (getpid()==pids[0]) {
           if (jugador_actual==1) {
             printf("\n\n\n");
-            printf("Turno del Jugador\n");
+            printf("Turno del jugador%d\n",jugador_actual);
             updateLast();
             if (color!=0)
               printColor();
@@ -859,7 +859,7 @@ int main(int argc, char const *argv[])
         if (getpid()==pids[1]) {
           if (jugador_actual==2) {
             printf("\n\n\n");
-            printf(" Turno del Jugador\n");
+            printf(" Turno del jugador%d\n",jugador_actual);
             updateLast();
             if (color!=0)
               printColor();
@@ -902,7 +902,7 @@ int main(int argc, char const *argv[])
         if (getpid()==pids[2]) {
           if (jugador_actual==3) {
             printf("\n\n\n");
-            printf("Turno del jugador\n");
+            printf("Turno del jugador%d\n",jugador_actual);
             updateLast();
             if (color!=0)
               printColor();
@@ -945,7 +945,7 @@ int main(int argc, char const *argv[])
         if (getpid()==pids[3]) {
           if (jugador_actual==4) {
             printf("\n\n\n");
-            printf("Turno del jugador\n");
+            printf("Turno del jugador%d\n",jugador_actual);
             updateLast();
             if (color!=0)
               printColor();
