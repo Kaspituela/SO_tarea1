@@ -632,7 +632,7 @@ void turno(int jugador)
       printf("El jugador%d roba la carta %s\n", jugador, token1);
       printf("¿Quieres jugarlo?\n[1]Si\n[2]No\n");
       scanf("%d", &sel);
-      if (sel) {
+      if (sel==1) {
         flag = verificarCarta();
         if (flag) {
             strcpy(nombre_carta,carta);
